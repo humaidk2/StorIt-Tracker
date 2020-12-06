@@ -1,4 +1,6 @@
-function distance(
+var geoip = require('geoip-lite')
+var _ = require('lodash')
+export function distance(
     lat1: number,
     lon1: number,
     lat2: number,
@@ -31,7 +33,7 @@ function distance(
     }
 }
 
-function getIp(socket: any) {
+export function getIp(socket: any) {
     let ip = _.has(socket.handshake.address, 'address')
         ? socket.handshake.address.address
         : socket.handshake.address
@@ -42,7 +44,11 @@ function getIp(socket: any) {
     return ip
 }
 
-function calculateDistance(socketId: string, serverSocketId: string, io: any) {
+export function calculateDistance(
+    socketId: string,
+    serverSocketId: string,
+    io: any
+) {
     var socket = io.sockets.connected[socketId]
     var serverSocket = io.sockets.connected[serverSocketId]
     let ip = getIp(socket)
@@ -59,7 +65,7 @@ function calculateDistance(socketId: string, serverSocketId: string, io: any) {
     return currDistance
 }
 
-function convertToContinent(country: string) {
+export function convertToContinent(country: string) {
     // prettier-ignore
     var ctryToCnt:any = {"EU":["AD","AL","AT","AX","BA","BE","BG","BY","CH","CZ","DE","DK","EE","ES","EU","FI","FO","FR","FX","GB","GG","GI","GR","HR","HU","IE","IM","IS","IT","JE","LI","LT","LU","LV","MC","MD","ME","MK","MT","NL","NO","PL","PT","RO","RS","RU","SE","SI","SJ","SK","SM","UA","VA"],
     "AS":["AF","AM","AP","AZ","BD","BN","BT","CC","CN","CX","GE","HK","ID","IN","IO","JP","KG","KH","KP","KR","KZ","LA","LK","MM","MN","MO","MV","MY","NP","PH","PK","PS","SG","TH","TJ","TL","TM","TW","UZ","VN"],
@@ -78,18 +84,10 @@ function convertToContinent(country: string) {
     return 'AN'
 }
 
-function getRegion(location: string, io: any) {
+export function getRegion(location: string, io: any) {
     let socket = io.sockets.connected[location]
     let ip = getIp(socket)
     var geo = geoip.lookup(ip)
     // var serverGeo = geoip.lookup(serverip);
     return convertToContinent(geo.country)
-}
-
-export default {
-    calculateDistance,
-    distance,
-    getIp,
-    convertToContinent,
-    getRegion,
 }

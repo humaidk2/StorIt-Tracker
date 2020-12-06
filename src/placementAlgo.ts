@@ -1,6 +1,4 @@
-var _ = require('lodash')
-var geoip = require('geoip-lite')
-var { calculateDistance, getRegion } = require('./geoIpHelpers')
+import { calculateDistance, getRegion } from './geoIpHelpers'
 
 function placeFile(
     con: any,
