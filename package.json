@@ -20,7 +20,7 @@
     }
   },
   "lint-staged": {
-    "*.+(ts|tsx)": [
+    "./src/*.(ts)": [
       "npm run prettier:write",
       "npm run test",
       "eslint --fix"
