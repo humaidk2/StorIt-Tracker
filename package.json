@@ -21,8 +21,7 @@
   },
   "lint-staged": {
     "*.+(ts|tsx)": [
-      "prettier --write",
-      "git add",
+      "npm run prettier:write",
       "npm run test",
       "eslint --fix"
     ]
