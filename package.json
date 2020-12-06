@@ -8,7 +8,7 @@
     "tslint": "tslint --project tsconfig.json",
     "start": "npm run build && NODE_ENV=production node ./build/server.js",
     "dev": "nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -r ts-node/register src/**/*.test.ts",
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\""
@@ -21,7 +21,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/socket.io": "^2.1.11",
     "express": "^4.17.1",
     "firebase-admin": "^8.9.0",
     "geoip-lite": "^1.4.1",
@@ -33,9 +32,15 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.14",
     "@types/express": "^4.17.9",
+    "@types/mocha": "^8.0.4",
     "@types/mysql": "^2.15.16",
     "@types/node": "^14.14.10",
+    "@types/socket.io": "^2.1.11",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.2.1",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "ts-node": "^9.1.0",
