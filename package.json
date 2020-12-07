@@ -9,7 +9,7 @@
     "tslint": "tslint --project tsconfig.json",
     "start": "npm run build && NODE_ENV=production node ./build/server.js",
     "dev": "nodemon",
-    "test": "mocha -r ts-node/register src/**/*.test.ts",
+    "test": "mocha -r ts-node/register \"src/**/*.test.ts\"",
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\""
@@ -22,7 +22,7 @@
   "lint-staged": {
     "*.(ts)": [
       "npm run prettier:write",
-      "npm run test",
+      "npm run test \\",
       "eslint --fix"
     ]
   },
