@@ -1,7 +1,7 @@
-var placementAlgo = require('./placementAlgo')
+import placementAlgo from './placementAlgo'
 import socketIO = require('socket.io')
 
-module.exports = function (io: socketIO.Server, con: any, admin: any) {
+export default function (io: socketIO.Server, con: any, admin: any) {
     //socket middleware
     // io.use((socket,next)=>{
     //   if (req.headers.authorization
@@ -41,7 +41,7 @@ module.exports = function (io: socketIO.Server, con: any, admin: any) {
             }
         })
         client.on('message', function (details) {
-            var otherClient = io.sockets.connected[details.to]
+            const otherClient = io.sockets.connected[details.to]
             if (!otherClient) {
                 console.log('no such other client')
                 return
@@ -73,8 +73,8 @@ module.exports = function (io: socketIO.Server, con: any, admin: any) {
 
         client.on('download', function (details) {
             // take file id and get all socket id for that file
-            let sql = `SELECT socketId FROM Server S Inner JOIN Chunk C ON S.ServerID = C.ServerID Where C.FileID = ${details.fileId} `
-            let query = con.query(sql, function (err: any, result: any) {
+            const sql = `SELECT socketId FROM Server S Inner JOIN Chunk C ON S.ServerID = C.ServerID Where C.FileID = ${details.fileId} `
+            const query = con.query(sql, function (err: any, result: any) {
                 if (err) {
                     console.log(err)
                 } else {
@@ -85,7 +85,7 @@ module.exports = function (io: socketIO.Server, con: any, admin: any) {
         })
 
         client.on('addserver', function (details) {
-            let post = {
+            const post = {
                 serverId: details.deviceId + details.authId,
                 uid: details.authId,
                 name: details.name,
@@ -97,11 +97,11 @@ module.exports = function (io: socketIO.Server, con: any, admin: any) {
                 currentDownTime: 0,
                 lastChecked: new Date(),
             }
-            let socketUpdate = {
+            const socketUpdate = {
                 location: client.id,
             }
-            let sql = `INSERT INTO Server SET ? ON DUPLICATE KEY UPDATE ?;`
-            let query = con.query(
+            const sql = `INSERT INTO Server SET ? ON DUPLICATE KEY UPDATE ?;`
+            const query = con.query(
                 sql,
                 [post, socketUpdate],
                 function (err: any, result: any) {
@@ -115,12 +115,12 @@ module.exports = function (io: socketIO.Server, con: any, admin: any) {
             )
         })
         client.on('addclient', function (details) {
-            let post = { uid: details.authId, location: details.id }
-            let socketUpdate = {
+            const post = { uid: details.authId, location: details.id }
+            const socketUpdate = {
                 location: client.id,
             }
-            let sql = `INSERT INTO Client SET ? ON DUPLICATE KEY UPDATE ?;`
-            let query = con.query(
+            const sql = `INSERT INTO Client SET ? ON DUPLICATE KEY UPDATE ?;`
+            const query = con.query(
                 sql,
                 [post, socketUpdate],
                 function (err: any, result: any) {

@@ -1,23 +1,24 @@
-var express = require('express')
-const path = require('path')
-const mysql = require('mysql')
-const eventEmitter = require('events')
-var admin = require('firebase-admin')
-const serviceAccount = require('./storit-28df0-firebase-adminsdk-do5d6-b70edb80ff.json')
-const request = require('request')
-const password = require('./Password')
-var app = express()
+import express = require('express')
+import path = require('path')
+import mysql = require('mysql')
+import eventEmitter = require('events')
+import admin = require('firebase-admin')
+import request = require('request')
+import serviceAccount from './storit-28df0-firebase-adminsdk-do5d6-b70edb80ff.json'
+import password from './Password'
+const app = express()
 const PORT = 8000
 // const http = require('https');
-const http = require('http')
-const fs = require('fs')
-const socketIO = require('socket.io')
+import http = require('http')
+import fs = require('fs')
+import socketIO = require('socket.io')
 
 //create instance access to the server
 //const server = http.createServer(options, app);
 // const io = socketIO(server);
 const publicPath = path.join(__dirname, '/../StorIt-Tracker')
-var socketHandler = './socketHandler'
+const socketHandler = './socketHandler'
+const firebaseParams: any = serviceAccount // to make typescript happy
 
 // app.use(express.static(publicPath));
 
@@ -30,18 +31,18 @@ var socketHandler = './socketHandler'
 const server = http.createServer(app)
 // const server = http.createServer(app);
 //Create app listener
-var serverListener = server.listen(PORT, () => {
+const serverListener = server.listen(PORT, () => {
     console.log('Server running at: http://localhost:' + PORT)
 })
 
 //Initialize The Admin-SDK (configuration)
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(firebaseParams),
     databaseURL: 'https://storit-28df0.firebaseio.com',
 })
 
 //create connection for the server
-var con = mysql.createConnection({
+const con = mysql.createConnection({
     host: 'localhost',
     user: password.user,
     password: password.DBpassword,
@@ -50,9 +51,9 @@ var con = mysql.createConnection({
 
 // require('./routes')(app);
 //connect the server to the database
-var createDb = function () {
+const createDb = function () {
     //if it connectes it creates a database
-    var sql = 'create database IF NOT EXISTS StorIt;'
+    let sql = 'create database IF NOT EXISTS StorIt;'
     con.query(sql, (err: any, result: any) => {
         if (err) {
             console.log(err)
@@ -162,8 +163,8 @@ app.get('/createdb', (req: any, res: any) => {
 })
 
 app.get('/delete', (req: any, res: any) => {
-    let sql = 'DROP Table Backup,Chunk,Server,File;'
-    let query = con.query(sql, function (err: any, result: any) {
+    const sql = 'DROP Table Backup,Chunk,Server,File;'
+    const query = con.query(sql, function (err: any, result: any) {
         if (err) {
             console.log(err)
         } else {
@@ -176,6 +177,8 @@ app.get('/delete', (req: any, res: any) => {
 
 // io.on('connection', socketHandler);
 
-var io = require('socket.io').listen(serverListener)
+import socketStatic = require('socket.io')
+const io = socketStatic.listen(serverListener)
 
-require('./socketHandler')(io, con, admin)
+import sHandler from './socketHandler'
+sHandler(io, con, admin)

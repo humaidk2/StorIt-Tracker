@@ -1,5 +1,5 @@
-var geoip = require('geoip-lite')
-var _ = require('lodash')
+import geoip = require('geoip-lite')
+import _ = require('lodash')
 export function distance(
     lat1: number,
     lon1: number,
@@ -10,11 +10,11 @@ export function distance(
     if (lat1 == lat2 && lon1 == lon2) {
         return 0
     } else {
-        var radlat1 = (Math.PI * lat1) / 180
-        var radlat2 = (Math.PI * lat2) / 180
-        var theta = lon1 - lon2
-        var radtheta = (Math.PI * theta) / 180
-        var dist =
+        const radlat1 = (Math.PI * lat1) / 180
+        const radlat2 = (Math.PI * lat2) / 180
+        const theta = lon1 - lon2
+        const radtheta = (Math.PI * theta) / 180
+        let dist =
             Math.sin(radlat1) * Math.sin(radlat2) +
             Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta)
         if (dist > 1) {
@@ -49,13 +49,13 @@ export function calculateDistance(
     serverSocketId: string,
     io: any
 ) {
-    var socket = io.sockets.connected[socketId]
-    var serverSocket = io.sockets.connected[serverSocketId]
-    let ip = getIp(socket)
-    let serverip = getIp(serverSocket)
-    var geo = geoip.lookup(ip)
-    var serverGeo = geoip.lookup(serverip)
-    var currDistance = distance(
+    const socket = io.sockets.connected[socketId]
+    const serverSocket = io.sockets.connected[serverSocketId]
+    const ip = getIp(socket)
+    const serverip = getIp(serverSocket)
+    const geo = geoip.lookup(ip) || { ll: [0, 0] }
+    const serverGeo = geoip.lookup(serverip) || { ll: [0, 0] }
+    const currDistance = distance(
         geo.ll[0],
         geo.ll[1],
         serverGeo.ll[0],
@@ -67,7 +67,7 @@ export function calculateDistance(
 
 export function convertToContinent(country: string) {
     // prettier-ignore
-    var ctryToCnt:any = {"EU":["AD","AL","AT","AX","BA","BE","BG","BY","CH","CZ","DE","DK","EE","ES","EU","FI","FO","FR","FX","GB","GG","GI","GR","HR","HU","IE","IM","IS","IT","JE","LI","LT","LU","LV","MC","MD","ME","MK","MT","NL","NO","PL","PT","RO","RS","RU","SE","SI","SJ","SK","SM","UA","VA"],
+    const ctryToCnt:any = {"EU":["AD","AL","AT","AX","BA","BE","BG","BY","CH","CZ","DE","DK","EE","ES","EU","FI","FO","FR","FX","GB","GG","GI","GR","HR","HU","IE","IM","IS","IT","JE","LI","LT","LU","LV","MC","MD","ME","MK","MT","NL","NO","PL","PT","RO","RS","RU","SE","SI","SJ","SK","SM","UA","VA"],
     "AS":["AF","AM","AP","AZ","BD","BN","BT","CC","CN","CX","GE","HK","ID","IN","IO","JP","KG","KH","KP","KR","KZ","LA","LK","MM","MN","MO","MV","MY","NP","PH","PK","PS","SG","TH","TJ","TL","TM","TW","UZ","VN"],
     "ME":["BH","CY","EG","IR","IQ","IL","JO","KW","LB","OM","QA","SA","SY","TR","AE","YE"],
     "NA":["AG","AI","AN","AW","BB","BL","BM","BS","BZ","CA","CR","CU","DM","DO","GD","GL","GP","GT","HN","HT","JM","KN","KY","LC","MF","MQ","MS","MX","NI","PA","PM","PR","SV","TC","TT","US","VC","VG","VI"],
@@ -76,7 +76,7 @@ export function convertToContinent(country: string) {
     "SA":["AR","BO","BR","CL","CO","EC","FK","GF","GY","PE","PY","SR","UY","VE"],
     "OC":["AS","AU","CK","FJ","FM","GU","KI","MH","MP","NC","NF","NR","NU","NZ","PF","PG","PN","PW","SB","TK","TO","TV","UM","VU","WF","WS"],
     "--":["O1"]};
-    for (var continent in ctryToCnt) {
+    for (const continent in ctryToCnt) {
         if (ctryToCnt[continent].indexOf(country) != -1) {
             return continent
         }
@@ -85,9 +85,9 @@ export function convertToContinent(country: string) {
 }
 
 export function getRegion(location: string, io: any) {
-    let socket = io.sockets.connected[location]
-    let ip = getIp(socket)
-    var geo = geoip.lookup(ip)
+    const socket = io.sockets.connected[location]
+    const ip = getIp(socket)
+    const geo = geoip.lookup(ip) || { country: 'AE' }
     // var serverGeo = geoip.lookup(serverip);
     return convertToContinent(geo.country)
 }

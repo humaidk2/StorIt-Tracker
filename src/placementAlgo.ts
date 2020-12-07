@@ -1,6 +1,6 @@
 import { calculateDistance, getRegion } from './geoIpHelpers'
 
-function placeFile(
+export default function placeFile(
     con: any,
     regions: any,
     userId: any,
@@ -18,7 +18,7 @@ function placeFile(
                 // for any server in serverlist // calculate and set distance
                 console.log(result0.length)
 
-                for (var i = 0; i < result0.length; i++) {
+                for (let i = 0; i < result0.length; i++) {
                     // only check the socket ids that are currently connected
                     // delete the rest
                     // if(io.sockets.connected.hasOwnProperty(result0[i].location)) else delete/slice results[i]
@@ -28,14 +28,14 @@ function placeFile(
                         io
                     ) //result0[i].location);
                 }
-                for (var i = 0; i < result0.length; i++) {
+                for (let i = 0; i < result0.length; i++) {
                     result0[i].region = getRegion(result0.location, io) //result0[i].location);
                 }
                 console.log(result0)
 
                 // console.log(placementAlgorithm(serverList, fileSize, regions));
 
-                var finalList = placementAlgorithm(result0, fileSize, regions)
+                const finalList = placementAlgorithm(result0, fileSize, regions)
                 console.log(finalList)
 
                 // if it failed then rollback and call the function again
@@ -49,9 +49,9 @@ function placeFile(
                         throw err
                     }
                     // try selecting for update
-                    var updatedServers: any[] = []
-                    for (var i = 0; i < finalList.length; i++) {
-                        for (var j = 0; j < finalList[i].length; j++) {
+                    const updatedServers: any[] = []
+                    for (let i = 0; i < finalList.length; i++) {
+                        for (let j = 0; j < finalList[i].length; j++) {
                             if (
                                 updatedServers.indexOf(finalList[i][j][0]) == -1
                             ) {
@@ -62,13 +62,13 @@ function placeFile(
 
                     let sql = 'select * from Server where ServerId=?'
 
-                    for (i = 1; i < updatedServers.length; i++) {
+                    for (let i = 1; i < updatedServers.length; i++) {
                         sql += ' OR ServerId=? '
                     }
 
                     sql += ' for update skip locked;'
 
-                    let query = con.query(
+                    const query = con.query(
                         sql,
                         updatedServers,
                         (err2: any, result2: any) => {
@@ -104,9 +104,9 @@ function placeFile(
                                         // });
                                     })
                                 } else {
-                                    var promiseList = []
+                                    const promiseList = []
                                     // for every in serverList
-                                    for (var i = 0; i < result0.length; i++) {
+                                    for (let i = 0; i < result0.length; i++) {
                                         // if the server is in updated servers
                                         if (
                                             updatedServers.indexOf(
@@ -117,11 +117,11 @@ function placeFile(
                                                 new Promise(
                                                     (resolve, reject) => {
                                                         console.log('run')
-                                                        var updateParam = [
+                                                        const updateParam = [
                                                             result0[i].storage,
                                                             result0[i].serverId,
                                                         ]
-                                                        var updateQuery =
+                                                        const updateQuery =
                                                             'update server set storage = ? where ServerId = ? ;'
                                                         con.query(
                                                             updateQuery,
@@ -159,9 +159,9 @@ function placeFile(
                                                     }
                                                 )
                                             } else {
-                                                let InsertFileSql =
+                                                const InsertFileSql =
                                                     'Insert into File set ?'
-                                                let InsertFilePost = {
+                                                const InsertFilePost = {
                                                     fileId: 0,
                                                     uid: userId,
                                                 }
@@ -177,15 +177,15 @@ function placeFile(
                                                             console.log(err2)
                                                         } else {
                                                             for (
-                                                                var j = 0;
+                                                                let j = 0;
                                                                 j <
                                                                 finalList[0]
                                                                     .length;
                                                                 j++
                                                             ) {
-                                                                let insertChunkSql =
+                                                                const insertChunkSql =
                                                                     'Insert into Chunk set ?'
-                                                                let insertChunkPost = {
+                                                                const insertChunkPost = {
                                                                     chunkId: 0,
                                                                     serverId:
                                                                         finalList[0][
@@ -218,7 +218,7 @@ function placeFile(
                                                                         } else {
                                                                             // for every other entry
                                                                             for (
-                                                                                var i = 1;
+                                                                                let i = 1;
                                                                                 i <
                                                                                 finalList.length;
                                                                                 i++
@@ -230,9 +230,9 @@ function placeFile(
                                                                                         ' i = ' +
                                                                                         i
                                                                                 )
-                                                                                let insertChunkSql =
+                                                                                const insertChunkSql =
                                                                                     'Insert into Chunk set ?'
-                                                                                let insertChunkPost = {
+                                                                                const insertChunkPost = {
                                                                                     chunkId: 0,
                                                                                     serverId:
                                                                                         finalList[
@@ -266,9 +266,9 @@ function placeFile(
                                                                                                 err2
                                                                                             )
                                                                                         } else {
-                                                                                            let insertBackupSql =
+                                                                                            const insertBackupSql =
                                                                                                 'Insert into Backup set ?'
-                                                                                            let insertBackupPost = {
+                                                                                            const insertBackupPost = {
                                                                                                 // chunkid, backupchunkid
                                                                                                 backupId: 0,
                                                                                                 chunkId:
@@ -363,9 +363,9 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
     // for every region
     // sum up the storage
 
-    var sumRegion: any = {}
+    const sumRegion: any = {}
     // iterate user defined regions
-    for (var i = 0; i < regions.length; i++) {
+    for (let i = 0; i < regions.length; i++) {
         // this is to ensure if a region appears twice,
         // then only the first instance will be initialized
         if (i === regions.indexOf(regions[i])) {
@@ -373,11 +373,11 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
         }
     }
 
-    for (var i = 0; i < serverList.length; i++) {
+    for (let i = 0; i < serverList.length; i++) {
         sumRegion[serverList[i].region] += serverList[i].storage
     }
     // ensure file can be stored
-    for (var i = 0; i < regions.length; i++) {
+    for (let i = 0; i < regions.length; i++) {
         sumRegion[serverList[i].region] -= fileSize
         if (sumRegion[serverList[i].region] < 0) {
             console.log('file failed to fit')
@@ -385,8 +385,8 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
             return []
         }
     }
-    var initialNumChunks = 0
-    var newServerList: any = []
+    let initialNumChunks = 0
+    const newServerList: any = []
     if (fileSize <= 50000000) {
         initialNumChunks = 1
     } else if (fileSize <= 200000000) {
@@ -401,20 +401,20 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
     if (initialNumChunks > serverList.length) {
         initialNumChunks = serverList.length
     }
-    var maxStorage = 0,
-        maxDistance = 0,
-        maxDownTime = 0
-    var minStorage = serverList[0].storage,
-        minDownTime = serverList[0].totalDownTime
-    var minDistance = 20000
-    var fileFits = false
-    var w1 = 0.2,
+    // let maxStorage = 0,
+    //     maxDistance = 0,
+    //     maxDownTime = 0
+    // let minStorage = serverList[0].storage,
+    //     minDownTime = serverList[0].totalDownTime
+    // let minDistance = 20000
+    let fileFits = false
+    let w1 = 0.2,
         w2 = 0.6,
         w3 = 0.2
-    var maxList = []
-    var minList = []
+    const maxList = []
+    const minList = []
     // create a list for each region
-    for (var i = 0; i < regions.length; i++) {
+    for (let i = 0; i < regions.length; i++) {
         if (i == regions.indexOf(regions[i])) {
             newServerList.push([])
             maxList.push([0, 0, 0])
@@ -427,15 +427,15 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
     // pls create separate files for each of these methods
     // find all maximum and minimums
     // when we copy to newserverlist, we need to copy only unique regions
-    for (var i = 0; i < serverList.length; i++) {
-        var currIndex = regions.indexOf(serverList[i].region)
+    for (let i = 0; i < serverList.length; i++) {
+        const currIndex = regions.indexOf(serverList[i].region)
         if (currIndex != -1) {
             // calculate distance
-            var servDistance = serverList[i].distance //calculateDistance(details.id, serversList[i].location);
-            var storage = serverList[i].storage
-            var downTime = serverList[i].totalDownTime
-            var location = serverList[i].location
-            var serverId = serverList[i].serverId
+            const servDistance = serverList[i].distance //calculateDistance(details.id, serversList[i].location);
+            const storage = serverList[i].storage
+            const downTime = serverList[i].totalDownTime
+            const location = serverList[i].location
+            const serverId = serverList[i].serverId
             // storage
             // max server downtime
             newServerList[currIndex].push({
@@ -467,51 +467,51 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
         }
     }
     // normalize all the data to between 0 and 100
-    var newMin = 1,
+    const newMin = 1,
         newMax = 100
-    var minRegionLength = newServerList[0].length
-    for (var i = 0; i < newServerList.length; i++) {
-        var maxDistance = maxList[i][2],
+    let minRegionLength = newServerList[0].length
+    for (let i = 0; i < newServerList.length; i++) {
+        const maxDistance = maxList[i][2],
             minDistance = minList[i][2]
-        var maxStorage = maxList[i][0],
+        const maxStorage = maxList[i][0],
             minStorage: any = minList[i][0]
-        var maxDownTime = maxList[i][1],
+        const maxDownTime = maxList[i][1],
             minDownTime: any = minList[i][1]
-        var oldDistanceRange = maxDistance - minDistance
-        var oldStorageRange = maxStorage - minStorage
-        var oldDownTimeRange = maxDownTime - minDownTime
-        for (var j = 0; j < newServerList[i].length; j++) {
+        const oldDistanceRange = maxDistance - minDistance
+        const oldStorageRange = maxStorage - minStorage
+        const oldDownTimeRange = maxDownTime - minDownTime
+        for (let j = 0; j < newServerList[i].length; j++) {
             if (oldDistanceRange == 0)
                 newServerList[i][j].distance = minDistance
             else {
-                var newRange = newMax - newMin
+                const newRange = newMax - newMin
                 newServerList[i][j].distance =
                     newMax -
                     ((newServerList[i][j].distance - minDistance) * newRange) /
                         oldDistanceRange +
                     newMin
-                newServerList[i][j].distance = newServerList[i][j].distance
+                // newServerList[i][j].distance = newServerList[i][j].distance
             }
             if (oldStorageRange == 0)
                 newServerList[i][j].newStorage = minStorage
             else {
-                var newRange = newMax - newMin
+                const newRange = newMax - newMin
                 newServerList[i][j].newStorage =
                     ((newServerList[i][j].storage - minStorage) * newRange) /
                         oldStorageRange +
                     newMin
-                newServerList[i][j].newStorage = newServerList[i][j].newStorage
+                // newServerList[i][j].newStorage = newServerList[i][j].newStorage
             }
             if (oldDownTimeRange == 0)
                 newServerList[i][j].downTime = minDownTime
             else {
-                var newRange = newMax - newMin
+                const newRange = newMax - newMin
                 newServerList[i][j].downTime =
                     newMax -
                     (((newServerList[i][j].downTime - minDownTime) * newRange) /
                         oldDownTimeRange +
                         newMin)
-                newServerList[i][j].downTime = newServerList[i][j].downTime
+                // newServerList[i][j].downTime = newServerList[i][j].downTime
             }
         }
         // get minimum region server length
@@ -525,12 +525,12 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
     // // pick top n
     // // check if it fits across all regions
     // // repeat increasing w2 and num of chunks
-    var finalList: any = {}
+    let finalList: any = {}
 
     while (!fileFits && initialNumChunks <= minRegionLength && w2 <= 1) {
         // calculate quality for each region
-        for (var i = 0; i < newServerList.length; i++) {
-            for (var j = 0; j < newServerList[i].length; j++) {
+        for (let i = 0; i < newServerList.length; i++) {
+            for (let j = 0; j < newServerList[i].length; j++) {
                 newServerList[i][j].quality =
                     newServerList[i][j].distance * w1 +
                     newServerList[i][j].newStorage * w2 +
@@ -542,15 +542,15 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
         // for maybe the smallest region
         // from 0 - 4, add all quality and divide by 4
         // then from 0 - 4, add all quality and divide by 4
-        var avgList = []
+        const avgList = []
         // calculate the avg quality across all the server regions across all regions
-        for (var i = 0; i < minRegionLength; i++) {
-            var avg = 0
-            for (var j = 0; j < newServerList.length; j++) {
+        for (let i = 0; i < minRegionLength; i++) {
+            let avg = 0
+            for (let j = 0; j < newServerList.length; j++) {
                 avg += newServerList[j][i].quality
             }
             avg /= newServerList.length
-            for (var j = 0; j < newServerList.length; j++) {
+            for (let j = 0; j < newServerList.length; j++) {
                 newServerList[j][i].averageQuality = avg
             }
             avgList.push(avg)
@@ -558,18 +558,18 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
         fileFits = true
         // console.log(newServerList)
         finalList = []
-        var qSum = 0
-        for (var i = 0; i < initialNumChunks; i++) {
+        let qSum = 0
+        for (let i = 0; i < initialNumChunks; i++) {
             qSum += avgList[i]
         }
         // we have set the avg q for each item
         // now we just copy the results to the finalList
         //and ensure it fits for all the regions
-        for (var i = 0; i < regions.length; i++) {
-            var index = regions.indexOf(regions[i])
+        for (let i = 0; i < regions.length; i++) {
+            const index = regions.indexOf(regions[i])
             if (index != i) {
                 // recalculate quality
-                for (var j = 0; j < newServerList[index].length; j++) {
+                for (let j = 0; j < newServerList[index].length; j++) {
                     newServerList[index][j].quality =
                         newServerList[index][j].distance * w1 +
                         newServerList[index][j].newStorage * w2 +
@@ -581,7 +581,7 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
                 )
             }
             finalList[i] = []
-            for (var j = 0; j < initialNumChunks; j++) {
+            for (let j = 0; j < initialNumChunks; j++) {
                 finalList[i].push([
                     newServerList[index][j].serverId,
                     Math.round((avgList[j] * fileSize) / qSum),
@@ -616,8 +616,8 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
         // for every server in the final list
         // add the storage back to the server in newserverlist
         if (!fileFits) {
-            for (var i = 0; i < newServerList.length; i++) {
-                for (var j = 0; j < newServerList[i].length; j++) {
+            for (let i = 0; i < newServerList.length; i++) {
+                for (let j = 0; j < newServerList[i].length; j++) {
                     newServerList[i][j].storage =
                         newServerList[i][j].currStorage
                 }
@@ -632,9 +632,9 @@ function placementAlgorithm(serverList: any, fileSize: any, regions: any) {
     }
     if (fileFits) {
         // reduce any used memory
-        for (var i = 0; i < serverList.length; i++) {
-            for (var j = 0; j < finalList.length; j++) {
-                for (var k = 0; k < finalList[j].length; k++) {
+        for (let i = 0; i < serverList.length; i++) {
+            for (let j = 0; j < finalList.length; j++) {
+                for (let k = 0; k < finalList[j].length; k++) {
                     // console.log(location)
                     if (finalList[j][k][0] === serverList[i].serverId) {
                         serverList[i].storage -= finalList[j][k][1]

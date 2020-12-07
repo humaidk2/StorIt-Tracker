@@ -8,6 +8,7 @@
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "prettier/@typescript-eslint", 
+        "eslint-config-prettier",
         "plugin:prettier/recommended"
     ],
     "parser": "@typescript-eslint/parser",
@@ -19,23 +20,23 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "prettier/prettier": "error",
-        "indent": [
-            "error",
-            4
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "never"
-        ],
-        "@typescript-eslint/no-var-requires": 0
+        "prettier/prettier": "error"
+        // "indent": [
+        //     "error",
+        //     4
+        // ],
+        // "linebreak-style": [
+        //     "error",
+        //     "unix"
+        // ],
+        // "quotes": [
+        //     "error",
+        //     "double"
+        // ],
+        // "semi": [
+        //     "error",
+        //     "never"
+        // ],
+        // "@typescript-eslint/no-var-requires": 0
     }
 }
