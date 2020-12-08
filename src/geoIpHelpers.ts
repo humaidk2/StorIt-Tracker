@@ -1,3 +1,4 @@
+import socketIO = require('socket.io')
 import geoip = require('geoip-lite')
 import _ = require('lodash')
 export function distance(
@@ -6,7 +7,7 @@ export function distance(
     lat2: number,
     lon2: number,
     unit: string
-) {
+): number {
     if (lat1 == lat2 && lon1 == lon2) {
         return 0
     } else {
@@ -33,9 +34,9 @@ export function distance(
     }
 }
 
-export function getIp(socket: any) {
+export function getIp(socket: socketIO.Socket): string {
     let ip = _.has(socket.handshake.address, 'address')
-        ? socket.handshake.address.address
+        ? socket.handshake.address
         : socket.handshake.address
     // since i have nginx setup i have to use this
     ip = _.has(socket.handshake.headers, 'x-real-ip')
@@ -47,8 +48,8 @@ export function getIp(socket: any) {
 export function calculateDistance(
     socketId: string,
     serverSocketId: string,
-    io: any
-) {
+    io: socketIO.Server
+): number {
     const socket = io.sockets.connected[socketId]
     const serverSocket = io.sockets.connected[serverSocketId]
     const ip = getIp(socket)
@@ -65,9 +66,10 @@ export function calculateDistance(
     return currDistance
 }
 
-export function convertToContinent(country: string) {
+export function convertToContinent(country: string): string {
     // prettier-ignore
-    const ctryToCnt:any = {"EU":["AD","AL","AT","AX","BA","BE","BG","BY","CH","CZ","DE","DK","EE","ES","EU","FI","FO","FR","FX","GB","GG","GI","GR","HR","HU","IE","IM","IS","IT","JE","LI","LT","LU","LV","MC","MD","ME","MK","MT","NL","NO","PL","PT","RO","RS","RU","SE","SI","SJ","SK","SM","UA","VA"],
+    const ctryToCnt:{[countryCode:string]:string[]} = {
+    "EU":["AD","AL","AT","AX","BA","BE","BG","BY","CH","CZ","DE","DK","EE","ES","EU","FI","FO","FR","FX","GB","GG","GI","GR","HR","HU","IE","IM","IS","IT","JE","LI","LT","LU","LV","MC","MD","ME","MK","MT","NL","NO","PL","PT","RO","RS","RU","SE","SI","SJ","SK","SM","UA","VA"],
     "AS":["AF","AM","AP","AZ","BD","BN","BT","CC","CN","CX","GE","HK","ID","IN","IO","JP","KG","KH","KP","KR","KZ","LA","LK","MM","MN","MO","MV","MY","NP","PH","PK","PS","SG","TH","TJ","TL","TM","TW","UZ","VN"],
     "ME":["BH","CY","EG","IR","IQ","IL","JO","KW","LB","OM","QA","SA","SY","TR","AE","YE"],
     "NA":["AG","AI","AN","AW","BB","BL","BM","BS","BZ","CA","CR","CU","DM","DO","GD","GL","GP","GT","HN","HT","JM","KN","KY","LC","MF","MQ","MS","MX","NI","PA","PM","PR","SV","TC","TT","US","VC","VG","VI"],
@@ -84,7 +86,7 @@ export function convertToContinent(country: string) {
     return 'AN'
 }
 
-export function getRegion(location: string, io: any) {
+export function getRegion(location: string, io: socketIO.Server): string {
     const socket = io.sockets.connected[location]
     const ip = getIp(socket)
     const geo = geoip.lookup(ip) || { country: 'AE' }
