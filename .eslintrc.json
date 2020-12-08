@@ -20,7 +20,11 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "prettier/prettier": "error"
+        "prettier/prettier": "error",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/explicit-module-boundary-types": ["warn", {
+            "allowArgumentsExplicitlyTypedAsAny": false
+          }]
         // "indent": [
         //     "error",
         //     4

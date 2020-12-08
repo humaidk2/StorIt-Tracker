@@ -1,4 +1,4 @@
-import placementAlgo from './placementAlgo'
+import placeFile from './placeFile'
 import socketIO = require('socket.io')
 
 export default function (io: socketIO.Server, con: any, admin: any) {
@@ -61,7 +61,7 @@ export default function (io: socketIO.Server, con: any, admin: any) {
             // for each region u need to find apt servers
             // get a list of all the servers
             // place the servers
-            placementAlgo(
+            placeFile(
                 con,
                 details.regions,
                 details.authId,
