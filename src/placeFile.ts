@@ -1,13 +1,51 @@
+import sequelize = require('sequelize')
 import { calculateDistance, getRegion } from './geoIpHelpers'
 import placementAlgorithm from './placementAlgo'
-export default function placeFile(
+
+const QueryTypes = sequelize.QueryTypes
+export default async function placeFile(
     con: any,
     regions: any,
     userId: any,
     fileSize: any,
     client: { id: any; emit: (arg0: string, arg1: any) => void },
     io: any
-): any {
+) {
+    // const serverList = await con.query(
+    //     'select * from Server where uid <> $1 for update skip locked;',
+    //     { bind: [userId], type: QueryTypes.SELECT }
+    // )
+    // await serverList.forEach((server: any) => {
+    //     // only check the socket ids that are currently connected
+    //     // delete the rest
+    //     // if(io.sockets.connected.hasOwnProperty(result0[i].location)) else delete/slice results[i]
+    //     server.distance = calculateDistance(client.id, server.location, io)
+    //     server.region = getRegion(server.location, io)
+    // })
+    // const finalList = await placementAlgorithm(serverList, fileSize, regions)
+    // await console.log(finalList)
+
+    // const transactionResult = await con.transaction(async (t: any) => {
+    //     // store the list of all final servers?
+    //     const updatedServers: any[] = []
+    //     for (let i = 0; i < finalList.length; i++) {
+    //         for (let j = 0; j < finalList[i].length; j++) {
+    //             if (updatedServers.indexOf(finalList[i][j][0]) == -1) {
+    //                 updatedServers.push(finalList[i][j][0])
+    //             }
+    //         }
+    //     }
+    //     con.query()
+    //     // let sql = 'select * from Server where ServerId=?'
+
+    //     //             for (let i = 1; i < updatedServers.length; i++) {
+    //     //                 sql += ' OR ServerId=? '
+    //     //             }
+
+    //     //             sql += ' for update skip locked;'
+
+    //     //             const query = con.query(
+    // })
     con.query(
         'select * from Server where uid <> ? for update skip locked;',
         [userId],
@@ -26,10 +64,10 @@ export default function placeFile(
                         client.id,
                         result0[i].location,
                         io
-                    ) //result0[i].location);
+                    )
                 }
                 for (let i = 0; i < result0.length; i++) {
-                    result0[i].region = getRegion(result0.location, io) //result0[i].location);
+                    result0[i].region = getRegion(result0[i].location, io) //result0[i].location);
                 }
                 console.log(result0)
 
