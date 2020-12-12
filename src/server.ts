@@ -42,7 +42,10 @@ admin.initializeApp({
     databaseURL: 'https://storit-28df0.firebaseio.com',
 })
 
-const { Backup, Chunk, Client, File, Server, sequelize } = createDb()
+const { Backup, Chunk, Client, File, Server, sequelize } = createDb(
+    process.env.STORIT_DB_NAME
+)
+sequelize.sync()
 app.use(express.static('public'))
 app.get('/createdb', async (req: any, res: any) => {
     await sequelize.sync({ force: true })
