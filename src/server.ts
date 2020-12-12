@@ -12,6 +12,7 @@ const PORT = 8000
 import http = require('http')
 import fs = require('fs')
 import socketIO = require('socket.io')
+import createDb from './models'
 
 //create instance access to the server
 //const server = http.createServer(options, app);
@@ -41,138 +42,11 @@ admin.initializeApp({
     databaseURL: 'https://storit-28df0.firebaseio.com',
 })
 
-//create connection for the server
-const con = mysql.createConnection({
-    host: 'localhost',
-    user: password.user,
-    password: password.DBpassword,
-    database: 'StorIt',
-})
-
-// require('./routes')(app);
-//connect the server to the database
-const createDb = function () {
-    //if it connectes it creates a database
-    let sql = 'create database IF NOT EXISTS StorIt;'
-    con.query(sql, (err: any, result: any) => {
-        if (err) {
-            console.log(err)
-        }
-        console.log(result)
-        console.log('Created Database')
-    })
-    //switch connection to the database
-    con.changeUser({
-        database: 'StorIt',
-    })
-    //create Server table in the database
-    sql =
-        'Create table IF NOT EXISTS Server(' +
-        'serverId varchar(100),' +
-        'uid VARCHAR(50),' +
-        'name VARCHAR(50),' +
-        'storage bigint, ' +
-        'availableStorage bigint,' +
-        'location VARCHAR(50), ' +
-        'status VARCHAR(50),' +
-        'totalDownTime int,' +
-        'currentDownTime int,' +
-        'lastChecked timestamp,' +
-        'PRIMARY KEY (serverId)' +
-        ');'
-    con.query(sql, (err: any, result: any) => {
-        if (err) {
-            console.log(err)
-        }
-        console.log(result)
-        console.log('Created Server table')
-    })
-
-    //create File table in the database
-    sql =
-        'Create table IF NOT EXISTS File(' +
-        'fileId int AUTO_INCREMENT, ' +
-        'uid VARCHAR(50), ' +
-        'PRIMARY KEY (FileId) ' +
-        ');'
-    con.query(sql, (err: any, result: any) => {
-        if (err) {
-            console.log(err)
-        }
-        console.log(result)
-        console.log('Created File table')
-    })
-
-    //create Chunk table in the database
-    sql =
-        'Create table IF NOT EXISTS Chunk(' +
-        'chunkId int AUTO_INCREMENT,' +
-        'serverId varchar(100), ' +
-        'fileID int, ' +
-        'chunkSize int, ' +
-        'FOREIGN KEY (serverId) REFERENCES Server(serverId), ' +
-        'FOREIGN KEY (fileId) REFERENCES File(fileId), ' +
-        'PRIMARY KEY (chunkId) ' +
-        ');'
-    con.query(sql, (err: any, result: any) => {
-        if (err) {
-            console.log(err)
-        }
-        console.log(result)
-        console.log('Created Chunk')
-    })
-    //create Chunk table in the database
-    sql =
-        'Create table IF NOT EXISTS Backup(' +
-        'backupId int AUTO_INCREMENT,' +
-        'chunkId int,' +
-        'backupChunkId VARCHAR(50), ' +
-        'FOREIGN KEY (chunkId) REFERENCES Chunk(chunkId),' +
-        'PRIMARY KEY (backupId) ' +
-        ');'
-    con.query(sql, (err: any, result: any) => {
-        if (err) {
-            console.log(err)
-        }
-        console.log(result)
-        console.log('Created Backup')
-    })
-
-    //create Chunk table in the database
-    sql =
-        'Create table IF NOT EXISTS Client(' +
-        'uid VARCHAR(50), ' +
-        'location VARCHAR(50), ' +
-        'PRIMARY KEY (uid) ' +
-        ');'
-    con.query(sql, (err: any, result: any) => {
-        if (err) {
-            console.log(err)
-        }
-        console.log(result)
-        console.log('Created Client')
-    })
-
-    console.log('Connected to MySQL')
-}
-
+const { Backup, Chunk, Client, File, Server, sequelize } = createDb()
 app.use(express.static('public'))
-app.get('/createdb', (req: any, res: any) => {
-    createDb()
-    res.end()
-})
-
-app.get('/delete', (req: any, res: any) => {
-    const sql = 'DROP Table Backup,Chunk,Server,File;'
-    const query = con.query(sql, function (err: any, result: any) {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log('database cleared\n')
-            console.log(result)
-        }
-    })
-    res.end()
+app.get('/createdb', async (req: any, res: any) => {
+    await sequelize.sync({ force: true })
+    await res.end()
 })
 
 // io.on('connection', socketHandler);
@@ -181,4 +55,4 @@ import socketStatic = require('socket.io')
 const io = socketStatic.listen(serverListener)
 
 import sHandler from './socketHandler'
-sHandler(io, con, admin)
+sHandler(io, sequelize, admin)
