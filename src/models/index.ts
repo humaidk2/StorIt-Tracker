@@ -4,11 +4,20 @@ import ChunkCreator from './chunk'
 import ClientCreator from './client'
 import FileCreator from './file'
 import ServerCreator from './server'
-export default function () {
-    const sequelize = new Sequelize('database', 'username', 'password', {
-        database: 'StorIt',
-        username: process.env.STORIT_DB_PASS,
-        password: process.env.STORIT_DB_PASS,
+// const mysql = require('mysql2/promise')
+export default function (dbName: any) {
+    // // create db if it doesn't already exist
+    // const { host, port, user, password, database } = config.database
+    // const connection = await mysql.createConnection({
+    //     host,
+    //     port,
+    //     user,
+    //     password,
+    // })
+    // await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`)
+    const dbUsername: any = process.env.STORIT_DB_USER
+    const dbPassword: any = process.env.STORIT_DB_PASS
+    const sequelize = new Sequelize(dbName, dbUsername, dbPassword, {
         host: 'localhost',
         dialect:
             'mysql' /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */,
@@ -28,7 +37,7 @@ export default function () {
     Chunk.hasMany(Backup)
     Backup.belongsTo(Chunk)
 
-    sequelize.sync()
+    // await sequelize.sync()
     return {
         Backup,
         Chunk,
