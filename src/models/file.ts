@@ -5,7 +5,7 @@ interface FileInstance extends Model {
 }
 export default function (sequelize: Sequelize): ModelCtor<FileInstance> {
     return sequelize.define<FileInstance>('File', {
-        fileId: {
+        Id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,

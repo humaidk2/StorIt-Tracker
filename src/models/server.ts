@@ -1,7 +1,8 @@
 import { Sequelize, Model, DataTypes, ModelCtor } from 'sequelize'
 
 interface ServerInstance extends Model {
-    serverId: string
+    Id: string
+    uId: string
     name: string
     storage: bigint
     availableStorage: bigint
@@ -13,10 +14,13 @@ interface ServerInstance extends Model {
 }
 export default function (sequelize: Sequelize): ModelCtor<ServerInstance> {
     return sequelize.define('Server', {
-        serverId: {
+        Id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
+        },
+        uId: {
+            type: DataTypes.STRING,
         },
         name: {
             type: DataTypes.STRING,
@@ -46,7 +50,7 @@ export default function (sequelize: Sequelize): ModelCtor<ServerInstance> {
 }
 // 'Create table IF NOT EXISTS Server(' +
 //         'serverId varchar(100),' +
-//         'uid VARCHAR(50),' +
+//         'uId VARCHAR(50),' +
 //         'name VARCHAR(50),' +
 //         'storage bigint, ' +
 //         'availableStorage bigint,' +

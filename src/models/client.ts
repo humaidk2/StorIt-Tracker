@@ -1,12 +1,12 @@
 import { Sequelize, Model, DataTypes, ModelCtor } from 'sequelize'
 
 interface ClientInstance extends Model {
-    uid: string
+    uId: string
     location: string
 }
 export default function (sequelize: Sequelize): ModelCtor<ClientInstance> {
     return sequelize.define<ClientInstance>('Client', {
-        uid: {
+        uId: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
@@ -18,7 +18,7 @@ export default function (sequelize: Sequelize): ModelCtor<ClientInstance> {
 }
 
 // Create table IF NOT EXISTS Client(' +
-//         'uid VARCHAR(50), ' +
+//         'uId VARCHAR(50), ' +
 //         'location VARCHAR(50), ' +
 //         'PRIMARY KEY (uid) ' +
 //         ');'

@@ -7,7 +7,7 @@ interface ChunkInstance extends Model {
 
 export default function (sequelize: Sequelize): ModelCtor<ChunkInstance> {
     return sequelize.define<ChunkInstance>('Chunk', {
-        chunkId: {
+        Id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,

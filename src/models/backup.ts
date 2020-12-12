@@ -6,7 +6,7 @@ interface BackupInstance extends Model {
 
 export default function (sequelize: Sequelize): ModelCtor<BackupInstance> {
     return sequelize.define<BackupInstance>('Backup', {
-        backupId: {
+        Id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
