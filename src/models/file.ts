@@ -10,6 +10,9 @@ export default function (sequelize: Sequelize): ModelCtor<FileInstance> {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
+        uId: {
+            type: DataTypes.STRING,
+        },
     })
 }
 

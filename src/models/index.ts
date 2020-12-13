@@ -21,6 +21,7 @@ export default function (dbName: any) {
         host: 'localhost',
         dialect:
             'mysql' /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */,
+        logging: false,
     })
     const Backup = BackupCreator(sequelize)
     const Chunk = ChunkCreator(sequelize)
@@ -28,13 +29,22 @@ export default function (dbName: any) {
     const File = FileCreator(sequelize)
     const Server = ServerCreator(sequelize)
 
-    File.hasMany(Chunk)
+    File.hasMany(Chunk, {
+        foreignKey: { allowNull: false },
+        onDelete: 'CASCADE',
+    })
     Chunk.belongsTo(File)
 
-    Server.hasMany(Chunk)
+    Server.hasMany(Chunk, {
+        foreignKey: { allowNull: false },
+        onDelete: 'CASCADE',
+    })
     Chunk.belongsTo(Server)
 
-    Chunk.hasMany(Backup)
+    Chunk.hasMany(Backup, {
+        foreignKey: { allowNull: false },
+        onDelete: 'CASCADE',
+    })
     Backup.belongsTo(Chunk)
 
     // await sequelize.sync()
