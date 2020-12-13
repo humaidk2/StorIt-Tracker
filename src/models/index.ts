@@ -47,6 +47,12 @@ export default function (dbName: any) {
     })
     Backup.belongsTo(Chunk)
 
+    Chunk.hasOne(Backup, {
+        foreignKey: { allowNull: false, name: 'BackupChunkId' },
+        onDelete: 'CASCADE',
+    })
+    Backup.belongsTo(Chunk)
+
     // await sequelize.sync()
     return {
         Backup,

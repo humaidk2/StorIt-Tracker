@@ -26,7 +26,7 @@ describe('Database tables testing', () => {
         let user: any
         before(async function () {
             // runs once before the first test in this block
-            user = await Client.create({ location: 'India' })
+            user = await Client.create({ uId: 'client0', location: 'India' })
         })
         it('Mock Client is an instance of Client', () => {
             expect(user).to.be.instanceOf(Client)
@@ -44,6 +44,24 @@ describe('Database tables testing', () => {
         it('Mock Client has location set properly', () => {
             expect(user.location).to.equal('India')
         })
+        it('Mock Client should update if key already exists', async () => {
+            const post = {
+                uId: 'client0',
+                location: 'Germany',
+            }
+            await Client.upsert(post)
+            const updatedClient = await Client.findByPk('client0')
+            expect(updatedClient.location).to.equal('Germany')
+        })
+        it("Mock Client should insert if key doesn't exist", async () => {
+            const post = {
+                uId: 'client1',
+                location: 'Denmark',
+            }
+            await Client.upsert(post)
+            const updatedClient = await Client.findByPk('client1')
+            expect(updatedClient.location).to.equal('Denmark')
+        })
     })
     describe('Testing Server Table', () => {
         // test status codes
@@ -55,8 +73,8 @@ describe('Database tables testing', () => {
                     Id: 'server0',
                     uId: 'humaidk2',
                     name: 'server0',
-                    storage: BigInt(323242342),
-                    availableStorage: BigInt(32423423),
+                    storage: 323242342,
+                    availableStorage: 32423423,
                     location: 'Dubai',
                     status: 'down',
                     totalDownTime: 200,
@@ -86,8 +104,8 @@ describe('Database tables testing', () => {
             expect(server.Id).to.be.a('string')
             expect(server.uId).to.be.a('string')
             expect(server.name).to.be.a('string')
-            expect(server.storage).to.be.a('bigint')
-            expect(server.availableStorage).to.be.a('bigint')
+            expect(server.storage).to.be.a('number')
+            expect(server.availableStorage).to.be.a('number')
             expect(server.location).to.be.a('string')
             expect(server.status).to.be.a('string')
             expect(server.totalDownTime).to.be.a('number')
@@ -98,12 +116,8 @@ describe('Database tables testing', () => {
         it('Mock Server has properties set properly', () => {
             expect(server.uId).to.equal('humaidk2')
             expect(server.name).to.equal('server0')
-            expect(server.storage.toString()).to.equal(
-                BigInt(323242342).toString()
-            )
-            expect(server.availableStorage.toString()).to.equal(
-                BigInt(32423423).toString()
-            )
+            expect(server.storage).to.equal(323242342)
+            expect(server.availableStorage).to.equal(32423423)
             expect(server.location).to.equal('Dubai')
             expect(server.status).to.equal('down')
             expect(server.totalDownTime).to.equal(200)
@@ -111,6 +125,15 @@ describe('Database tables testing', () => {
             expect(server.lastChecked).to.deep.equal(
                 new Date('December 17, 1995 03:24:00')
             )
+        })
+        it('Mock Server should update if key already exists', async () => {
+            const post = {
+                Id: 'server0',
+                location: 'Germany',
+            }
+            await Server.upsert(post)
+            const updatedServer = await Server.findByPk('server0')
+            expect(updatedServer.location).to.equal('Germany')
         })
     })
     describe('Testing File Table', () => {
@@ -155,6 +178,12 @@ describe('Database tables testing', () => {
                     FileId: 'file0',
                     ServerId: 'server0',
                 })
+                await Chunk.create({
+                    Id: 'chunk1',
+                    chunkSize: 50000,
+                    FileId: 'file0',
+                    ServerId: 'server0',
+                })
             } catch (error) {
                 console.log(error)
             }
@@ -189,6 +218,7 @@ describe('Database tables testing', () => {
             try {
                 backup = await Backup.create({
                     ChunkId: 'chunk0',
+                    BackupChunkId: 'chunk1',
                 })
             } catch (error) {
                 console.log(error)
@@ -200,14 +230,17 @@ describe('Database tables testing', () => {
         it('Mock Backup has all Backup properties', () => {
             expect(backup).has.property('Id')
             expect(backup).has.property('ChunkId')
+            expect(backup).has.property('BackupChunkId')
         })
         it('Mock Backup properties are of appropriate type', () => {
             expect(backup.Id).to.be.a('string')
             expect(backup.ChunkId).to.be.a('string')
+            expect(backup.BackupChunkId).to.be.a('string')
         })
 
         it('Mock Backup has properties set properly', () => {
             expect(backup.ChunkId).to.equal('chunk0')
+            expect(backup.BackupChunkId).to.equal('chunk1')
         })
     })
 })
