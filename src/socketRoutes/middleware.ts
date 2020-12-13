@@ -9,9 +9,7 @@ export default function (client: any, admin: any) {
         ) {
             try {
                 const authToken = socket[1].token
-                console.log('authenticated', authToken)
                 const userInfo = await admin.auth().verifyIdToken(authToken)
-                console.log('authenticated', userInfo.uid)
                 socket[1].authId = userInfo.uid
                 next()
             } catch (e) {
