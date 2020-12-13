@@ -13,7 +13,7 @@ export default function (sequelize: Sequelize): ModelCtor<ChunkInstance> {
             primaryKey: true,
         },
         chunkSize: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
         },
     })
 }
